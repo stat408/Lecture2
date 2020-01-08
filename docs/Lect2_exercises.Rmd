@@ -1,0 +1,36 @@
+---
+title: "Lecture 2: Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Reading Data files
+
+```{r read.data}
+Seattle <- read.csv(
+  'http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv', 
+  stringsAsFactors = F)
+```
+
+
+
+## Exercise: Vectors
+
+Create a vector with your first, middle, and last names.
+
+
+## Exercise: Subsetting
+1. Create a new data frame that only includes houses worth more than $1,000,000.
+
+2. From this new data frame what is the average living square footage of houses. 
+
+## Exercise: Basic Plot
+
+- Using only the subset of homes worth more than a million dollars, create a graphic.
+
