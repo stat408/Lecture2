@@ -88,6 +88,8 @@ log <- c(TRUE,FALSE,F,T)
 char <- c('this is','a character string')
 ```
 
+
+
 ## Vector Types
 They type of vector can be identified using the `typeof()` function. Note that only a single data type is allowed.
 ```{r vector.type}
@@ -103,14 +105,40 @@ They type of vector can be identified using the `typeof()` function. Note that o
 Create a vector with your first, middle, and last names.
 
 
-
-
 ## Solution: Vectors
 
 1. Create a vector with your first, middle, and last names.
 ```{r}
 andy.names <- c("Andrew","Blake","Hoegh")
 andy.names
+```
+
+## Logical Values in R (Conditions)
+We have touched on many of these before, but here are some examples of expressions (conditions) in R. Evaluate these expressions:
+```{r}
+TRUE
+pi > 3
+pi == 3.14
+
+```
+
+
+
+## Exercise: Conditions in R
+Note that `&` is an and operator
+
+```{r, eval=FALSE}
+pi > 3 & pi < 3.5
+c(1,3,5,7) %in% 1:3
+1:3 %in% c(1,3,5,7)
+```
+
+## Solutions: Conditions in R: Evaluated
+\footnotesize
+```{r}
+pi > 3 & pi < 3.5
+c(1,3,5,7) %in% 1:3
+1:3 %in% c(1,3,5,7)
 ```
 
 
@@ -206,6 +234,94 @@ expensive_houses2 <- Seattle %>% filter(price > 1000000)
 mean(expensive_houses$sqft_living)
 Seattle %>% filter(price > 1000000) %>% summarize(ave_size = mean(sqft_living))
 ```
+
+
+## Lists
+Consider the two lists 
+
+```{r}
+msu.info <- list( name = c('Waded Cruzado','Andy Hoegh'), 
+         degree.from = c('University of Texas at Arlington','Virginia Tech'),
+         job.title = c('President', 'Assistant Professor of Statistics'))
+
+msu.info2 <- list(c('Waded Cruzado','University of Texas at Arlington',
+                     'President'), c('Andy Hoegh',
+                  'Virginia Tech','Assistant Professor of Statistics'))
+```
+
+## List Output
+
+```{r, mysize=TRUE, size='\\tiny'}
+
+msu.info
+
+msu.info2
+```
+
+## Lists - indexing
+With the current lists we can index elements using the double bracket `[[ ]]` notation or if names have been initialized, those can be used too.
+
+So the first element of each list can be indexed
+```{r, mysize=TRUE, size='\\tiny'}
+msu.info[[1]]
+msu.info$name
+```
+
+## Exercise: Lists 
+Explore the indexing with these commands.
+```{r, mysize=TRUE, size='\\tiny', eval=F}
+msu.info <- list( name = c('Waded Cruzado','Andy Hoegh'), 
+         degree.from = c('University of Texas at Arlington','Virginia Tech'),
+         job.title = c('President', 'Assistant Professor of Statistics'))
+msu.info[1]
+msu.info[[1]]
+msu.info$name[2]
+msu.info[1:2]
+unlist(msu.info)
+```
+
+## Solution: Lists 1
+```{r, mysize=TRUE, size='\\tiny'}
+msu.info[1]
+msu.info[[1]]
+msu.info$name[2]
+```
+
+## Solution: Lists 2
+```{r, mysize=TRUE, size='\\tiny'}
+msu.info[1:2]
+unlist(msu.info)
+```
+
+
+## Lists  - nested lists
+
+```{r, mysize=TRUE, size='\\footnotesize'}
+
+list(list('a','b'),list('c','d'))
+```
+
+
+## Arrays
+
+Arrays are a general form a matrix, but have a higher dimension.
+
+```{r, mysize=TRUE, size='\\tiny'}
+array.1 <- array(1:8, dim=c(2,2,2)); array.1
+array.1[2,2,1]
+```
+
+## Exercise: Arrays
+
+Create an array of dimension 2 x 2 x 3, where each of the three 2 x 2 subarray (or matrix) is the Identity matrix.
+
+## Solution: Arrays
+Create an array of dimension 2 x 2 x 3, where each of the three 2 x 2 subarray (or matrix) is the Identity matrix.
+
+```{r, mysize=TRUE, size='\\tiny'}
+array(c(1,0,0,1), dim = c(2,2,3))
+```
+
 
 # Graphics
 
