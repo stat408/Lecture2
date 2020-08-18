@@ -1,5 +1,5 @@
 ---
-title: "Lecture 2: R Overview"
+title: "ggplot2"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -9,373 +9,214 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
 library(knitr)
-library(tidyverse)
+library(readr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# R Intro
-
-## Why use R?
-R is:
-
-- a free public domain implementation of S,
-- the standard among (academic) professional statisticians,
-- available for Windows, Mac, and Linux,
-- an object-oriented and functional programming structure, and 
-- designed to connect to high-performance programming languages like C, Fortran, and Julia.
 
 
-## Why use R?
-R has:
+## ggplot2 Overview
+Why ggplot2?
 
-- an open-software environment with a large community that makes getting help easy,
-- a massive set of packages for statistical modeling, data science, visualization, and importing and manipulating data,
-- powerful tools for replicating and communicating your results,
-- an interactive development environment (R Studio) tailored for interactive data analysis and statistical programmming,
-- available for Windows, Mac, and Linux, and
-- an object-oriented and functional programming structure.
+### Advantages of ggplot2
 
+- consistent underlying grammar of graphics (Wilkinson, 2005)
+- plot specification at a high level of abstraction
+- very flexible
+- theme system for polishing plot appearance
 
-## Reading Data files
-The ability to datasets into R is an essential skill. For this class, most of the files will be on the course webpage and can be directly downloaded using `read.csv`. Consider the Seattle Housing dataset from Lab 1.
+## Grammar of Graphics
+The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want.
 
-```{r read.data}
-Seattle <- read.csv(
-  'http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv', 
-  stringsAsFactors = F)
+Building blocks of a graph include:
+
+- data
+- aesthetic mapping
+- geometric object
+- statistical transformations
+- faceting
+
+## ggplot2 VS Base Graphics
+
+Compared to base graphics, ggplot2
+
+- is more verbose for simple / canned graphics
+- is less verbose for complex / custom graphics
+- does not have methods (data should always be in a data.frame)
+- uses a different system for adding plot elements
+
+## Aesthetic Mapping
+
+Aesthetics are things that you can see. Examples include:
+
+>- position (i.e., on the x and y axes)
+>- color ("outside" color)
+>- fill ("inside" color)
+>- shape (of points)
+>- linetype
+>- size
+
+Aesthetic mappings are set with the aes() function.
+
+## Geometric Objects (geom)
+
+Geometric objects are the actual marks we put on a plot. Examples include:
+
+>- points (`geom_point`)
+>- lines (`geom_line`)
+>- boxplot (`geom_boxplot`)
+
+A plot must have at least one geom; there is no upper limit. You can add a geom to a plot using the `+` operator
+
+## NCAA Basketball data
+We will use data from the NCAA basketball tournament from 2011 - 2016.
+```{r, message = F}
+hoops <- read_csv('http://www.math.montana.edu/ahoegh/teaching/stat408/datasets/TourneyDetailedResults.csv')
+hoops_2011 <- hoops %>% filter(Season >= 2011)
+hoops_2011
 ```
 
-## Reading Data files
-Recall we can also use the `read_csv()` function from the tidyverse.
+
+## Graphical Primitives/ ggplot
+```{r, fig.align='center', fig.height=2.75}
+graph.a <- ggplot(data = hoops_2011, aes(Lfgm,Wfgm))
+graph.a
+```
+
+## Adding Geoms: `geom_point()`
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_point()
+```
+
+## Adding Geoms: `geom_smooth()`
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_point() + 
+  geom_smooth(method = 'loess', formula = 'y ~ x')
+```
+
+## Adding Geoms: `geom_rug()`
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_point() + 
+  geom_smooth(method = 'loess', formula = 'y ~ x') +
+  geom_rug()
+```
+
+## Adding Geoms: `geom_density2d()`
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_point() + 
+  geom_smooth(method = 'loess', formula = 'y ~ x') +
+  geom_rug() + geom_density2d()
+```
+
+## Adding Geoms: `geom_jitter()`
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_rug() + geom_density2d() + geom_jitter()
+```
+
+## Adding Geoms: `labs()`
+```{r, fig.align='center', fig.height=2.65}
+graph.a  + geom_rug() + geom_density2d() +
+ geom_jitter() + 
+  labs(x='Losing Team Field Goals Made', 
+       y = 'Winning Team Field Goals Made')
+```
+
+## Scales: `xlim()` and `ylim()`
+```{r, mysize=TRUE, fig.align='center',warning=FALSE, fig.height=2.6}
+graph.a + geom_rug() + geom_density2d() +
+ geom_jitter() + 
+  labs(x='Losing Team Field Goals Made', 
+       y = 'Winning Team Field Goals Made') +
+  xlim(c(0,max(hoops_2011$Wfgm))) + ylim(c(0,max(hoops_2011$Wfgm)))
+```
+
+## Themes
+There are a wide range of themes available in ggplot: [theme overview](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+```{r,fig.align='center', fig.height=2.75, echo = F}
+graph.a + geom_point() + theme_light() + labs(x='Losing Team Field Goals Made', y = 'Winning Team Field Goals Made')
+```
+
+## More about aes
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_jitter(col = 'firebrick4')
+```
+
+## More about aes
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_jitter(aes(col = as.factor(Season)))
+```
+
+
+## More about aes
+```{r, fig.align='center', fig.height=2.75}
+graph.a + geom_jitter(aes(col = as.factor(Season)), size=3,alpha=.4)
+```
+
+## More about aes
+```{r, echo = F, mysize=TRUE,fig.align='center'}
+graph.a + geom_jitter(aes(shape = as.factor(Season),col=Wscore), size=3,alpha=.4)
+```
+
+## More about aes: Comment
+```{r, eval = F, mysize=TRUE,fig.align='center'}
+graph.a + 
+  geom_jitter(aes(shape = as.factor(Season),col=Wscore),
+              size=3,alpha=.4)
+```
+
+## Faceting
+```{r, echo = F}
+graph.a + geom_point() + facet_wrap(~Season)
+```
+
+## Faceting: Comment
+```{r, eval = F}
+graph.a + geom_point() + facet_wrap(~Season)
+```
+
+## Faceting
+```{r, mysize=TRUE, eval=T, size='\\tiny',fig.align='center', fig.height=2.75}
+graph.a + facet_wrap(~Season) + 
+  geom_jitter(alpha=.5, aes(color=Wfgm3))
+```
+
+## Seattle Housing Data Set
+Use the Seattle Housing Data Set [http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv](http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv) to create an interesting graphic, include informative titles, labels, and add an annotation.
 
 ```{r}
-Seattle2 <- read_csv('http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv')
-```
-
-## Viewing Data files
-A common function that we will use is `head`, which shows the first few rows of a data frame.
-
-```{r}
-head(Seattle)
-```
-
-# R Data Structures
-## Data structure Overview
-R has four common types of data structures:
-
-- Vectors
-- Matrices (and Arrays) 
-- Lists
-- Data Frames (including tibbles)
-
-## Data structure Overview
-The base data structures in R can be organized by dimensionality and whether they are homogenous.
-
-Dimension     | Homogenous     | Heterogenous
-------------- | -------------  | -------------
-1d            | Vector         | List
-2d            | Matrix         | Data Frame
-no d          | Array          | 
-
-
-## Vector Types
-There are four common types of vectors: logical, integer, double (or numeric), and character. The `c()` function is used for combining elements into a vector
-
-```{r vectors}
-dbl <- c(1,2.5,pi)
-int <- c(1L,4L,10L)
-log <- c(TRUE,FALSE,F,T)
-char <- c('this is','a character string')
+seattle_in <- read_csv('http://math.montana.edu/ahoegh/teaching/stat408/datasets/SeattleHousing.csv')
 ```
 
 
+## Exercise: ggplot2
 
-## Vector Types
-They type of vector can be identified using the `typeof()` function. Note that only a single data type is allowed.
-```{r vector.type}
-  typeof(dbl)
-  comb <- c(char,dbl)
-  typeof(comb)
-  comb
+Now use `ggplot2` to create an interesting graph using the Seattle Housing data set.
+
+## Solution: ggplot2
+```{r,fig.align='center',echo=F}
+seattle_in$zipcode <- as.factor(seattle_in$zipcode)
+graph.a <- ggplot(data = seattle_in, aes(sqft_living,price))
+graph.a + geom_jitter(aes(col = zipcode))+ theme(plot.title = element_text(size=8), text = element_text(size=6)) + geom_smooth(method='loess')+ggtitle('Seattle Housing Sales: Price vs. Square Footage Living Space') + ylab('Sales Price (million dollars)') + xlab('Living Space (square foot)')+scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)), labels=as.character(0:7)) +  annotate('text',3500,6000000, label = 'Housing price depends on zipcode', size=2) +annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) + geom_segment(aes(x=3500, xend=3500, y=5500000, yend=3000000),
+                           arrow = arrow(length = unit(0.5, "cm")))
 ```
 
-
-## Exercise: Vectors
-
-Create a vector with your first, middle, and last names.
-
-
-## Solution: Vectors
-
-1. Create a vector with your first, middle, and last names.
-```{r}
-andy.names <- c("Andrew","Blake","Hoegh")
-andy.names
-```
-
-## Logical Values in R (Conditions)
-We have touched on many of these before, but here are some examples of expressions (conditions) in R. Evaluate these expressions:
-```{r}
-TRUE
-pi > 3
-pi == 3.14
-
-```
-
-
-
-## Exercise: Conditions in R
-Note that `&` is an and operator
-
-```{r, eval=FALSE}
-pi > 3 & pi < 3.5
-c(1,3,5,7) %in% 1:3
-1:3 %in% c(1,3,5,7)
-```
-
-## Solutions: Conditions in R: Evaluated
-\footnotesize
-```{r}
-pi > 3 & pi < 3.5
-c(1,3,5,7) %in% 1:3
-1:3 %in% c(1,3,5,7)
-```
-
-
-## Data Frame Overview
-A data frame:
-
->- is the most common way of storing data in R
->- is like a matrix with rows-and-column structure; however, unlike a matrix each column may have a different mode
->- in a technical sense, a data frame is a list of equal-length vectors.
-
-```{r df}
-df <- data.frame(x = 1:3, y = c('a','b','c'))
-kable(df)
-```
-
-## tibble()
-A modern data frame can be constructed using the `tibble()` command.
-
->- The `read_csv` command creates a tibble rather than a data.frame.
-
->- The tibble includes the type of each vector, and only prints a certain number of rows/columns.
-
-```{r}
-tibble1 <- tibble(x = 1:3, y = c('a','b','c')); tibble1
-```
-
-
-# Subsetting
- 
-## Vector Subsetting: I
-Subsetting allows you to extract elements from an object.
-
-```{r }
-num.vec <- seq(from = 1, to = 9, by = 1); num.vec
-num.vec[1:3]
-num.vec[c(1,5,8)]
-```
-
-## Vector Subsetting: II
-Subsetting also works with negative values or expressions.
-```{r subset2}
-num.vec[-5]
-num.vec[num.vec != 6]
-num.vec[num.vec > 5]
-```
-
-## Vector Subsetting: III
-Another possibility is to use logical values directly.
-```{r subset3}
-num.vec > 5
-num.vec[num.vec > 5]
-num.vec[rep(c(TRUE,FALSE,TRUE),each=3)]
-```
-
-
-## Data Frame Subsetting: I
-The same ideas apply to data frames, but the indices now constitute rows and columns of the data frame.
-```{r subset.df}
-df <- data.frame(x=1:3, y=3:1, z=c('a','b','c'))
-df[,1]
-df[-1,c(2:3)]
-```
-
-## Data Frame Subsetting: II
-There are also a couple built in functions in R for subsetting data frames.
-```{r subset.df2}
-df$x
-new.df <- subset(df, x >1); new.df
-```
-
-## Data Frame Subsetting: II
-The `filter()` and `select()` functions in the `dplyr` package (in the tidyverse) can also be used for subsetting.
-```{r subset.df3}
-df %>% select(x)
-filter(df, x > 1)
-```
-
-## Exercise: Subsetting
-1. Create a new data frame that only includes houses worth more than $1,000,000.
-
-2. From this new data frame what is the average living square footage of houses. 
-
-## Exercise: Subsetting - Solutions1
-1. Create a new data frame that only includes houses worth more than $1,000,000.
-```{r}
-expensive_houses <- subset(Seattle, price > 1000000)
-expensive_houses2 <- Seattle %>% filter(price > 1000000)
-```
-
-## Exercise: Subsetting - Solutions2
-2. From this new data frame what is the average living square footage of houses. Hint columns in a data.frame can be indexed by `Seattle$sqft_living`
-```{r}
-mean(expensive_houses$sqft_living)
-Seattle %>% filter(price > 1000000) %>% summarize(ave_size = mean(sqft_living))
-```
-
-
-## Lists
-Consider the two lists 
-
-```{r}
-msu.info <- list( name = c('Waded Cruzado','Andy Hoegh'), 
-         degree.from = c('University of Texas at Arlington','Virginia Tech'),
-         job.title = c('President', 'Assistant Professor of Statistics'))
-
-msu.info2 <- list(c('Waded Cruzado','University of Texas at Arlington',
-                     'President'), c('Andy Hoegh',
-                  'Virginia Tech','Assistant Professor of Statistics'))
-```
-
-## List Output
-
-```{r, mysize=TRUE, size='\\tiny'}
-
-msu.info
-
-msu.info2
-```
-
-## Lists - indexing
-With the current lists we can index elements using the double bracket `[[ ]]` notation or if names have been initialized, those can be used too.
-
-So the first element of each list can be indexed
-```{r, mysize=TRUE, size='\\tiny'}
-msu.info[[1]]
-msu.info$name
-```
-
-## Exercise: Lists 
-Explore the indexing with these commands.
-```{r, mysize=TRUE, size='\\tiny', eval=F}
-msu.info <- list( name = c('Waded Cruzado','Andy Hoegh'), 
-         degree.from = c('University of Texas at Arlington','Virginia Tech'),
-         job.title = c('President', 'Assistant Professor of Statistics'))
-msu.info[1]
-msu.info[[1]]
-msu.info$name[2]
-msu.info[1:2]
-unlist(msu.info)
-```
-
-## Solution: Lists 1
-```{r, mysize=TRUE, size='\\tiny'}
-msu.info[1]
-msu.info[[1]]
-msu.info$name[2]
-```
-
-## Solution: Lists 2
-```{r, mysize=TRUE, size='\\tiny'}
-msu.info[1:2]
-unlist(msu.info)
-```
-
-
-## Lists  - nested lists
-
-```{r, mysize=TRUE, size='\\footnotesize'}
-
-list(list('a','b'),list('c','d'))
-```
-
-
-## Arrays
-
-Arrays are a general form a matrix, but have a higher dimension.
-
-```{r, mysize=TRUE, size='\\tiny'}
-array.1 <- array(1:8, dim=c(2,2,2)); array.1
-array.1[2,2,1]
-```
-
-## Exercise: Arrays
-
-Create an array of dimension 2 x 2 x 3, where each of the three 2 x 2 subarray (or matrix) is the Identity matrix.
-
-## Solution: Arrays
-Create an array of dimension 2 x 2 x 3, where each of the three 2 x 2 subarray (or matrix) is the Identity matrix.
-
-```{r, mysize=TRUE, size='\\tiny'}
-array(c(1,0,0,1), dim = c(2,2,3))
-```
-
-
-# Graphics
-
-## Basic Plotting in R: Scatterplot
-For now, let's consider some of the basic functionality in R.
-
-```{r plot,fig.align='center',fig.width=6, fig.height=4}
-plot(Seattle$price~Seattle$sqft_living)
-```
-
-## Basic Plotting in R: labels
-```{r plot2,fig.align='center',fig.width=6, fig.height=4,echo=T}
-plot(Seattle$price~Seattle$sqft_living, 
-     ylab='Price',xlab='Living Sqft')
-```
-
-## Basic Plotting in R: pch
-```{r plot3,fig.align='center',fig.width=6, fig.height=4}
-plot(Seattle$price~Seattle$sqft_living, 
-     ylab='Price',xlab='Living Sqft', pch=16)
-```
-
-## Basic Plotting in R: color
-```{r plot3b,fig.align='center',fig.width=6, fig.height=4}
-plot(Seattle$price~Seattle$sqft_living, pch=16,
-     col=rgb(0,0,.3,.3),ylab='Price',xlab='Living Sqft')
-```
-
-
-## Basic Plotting in R: title
-```{r plot4,fig.align='center',fig.width=6, fig.height=4}
-plot(Seattle$price~Seattle$sqft_living, pch=16, ylab='Price',
-     xlab='Living Sqft',main='Price vs. Living Sqft')
-```
-
-## Basic Plotting in R: histogram
-```{r plot5,fig.align='center',fig.align='center',fig.width=6, fig.height=4}
-hist(Seattle$price,xlab='Price', breaks='FD')
-```
-
-## Basic Plotting in R: histogram
-```{r plot6,fig.align='center',fig.width=6, fig.height=4}
-boxplot(Seattle$price~Seattle$bedrooms,ylab='Price', col='red',
-        xlab='bedrooms',main='Price by Bedrooms for Seattle')
-```
-
-## Exercise: Basic Plot
-
-- Using only the subset of homes worth more than a million dollars, create a graphic.
-
-## Solution: Basic Plot 
-
-```{r fig.align='center',fig.width=6, fig.height=4}
-boxplot(expensive_houses$price~expensive_houses$bedrooms,ylab='Price', col='red',
-        xlab='bedrooms',main='Price by Bedrooms for Seattle',
-        sub='For homes worth more than $1,000,000')
+## Solution: ggplot2
+```{r, eval = F}
+seattle_in$zipcode <- as.factor(seattle_in$zipcode)
+graph.a <- ggplot(data = seattle_in, aes(sqft_living,price))
+graph.a + geom_jitter(aes(col = zipcode))+ 
+  theme(plot.title = element_text(size=8), 
+        text = element_text(size=6)) + geom_smooth(method='loess')+
+  ggtitle('Seattle Housing Sales: Price vs. Square Footage Living Space') + 
+  ylab('Sales Price (million dollars)') + 
+  xlab('Living Space (square foot)')+
+  scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)),
+                     labels=as.character(0:7)) +  
+  annotate('text',3500,6000000, 
+           label = 'Housing price depends on zipcode', size=2) +
+  annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) + 
+  geom_segment(aes(x=3500, xend=3500, y=5500000, yend=3000000),
+                           arrow = arrow(length = unit(0.5, "cm")))
 ```
