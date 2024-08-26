@@ -1,5 +1,5 @@
 ---
-title: "ggplot2"
+title: "Week 2: ggplot"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -22,30 +22,29 @@ Why ggplot2?
 
 ### Advantages of ggplot2
 
-- consistent underlying grammar of graphics (Wilkinson, 2005)
-- plot specification at a high level of abstraction
-- very flexible
-- theme system for polishing plot appearance
+>- consistent underlying grammar of graphics (Wilkinson, 2005)
+>- very flexible
+>- theme system for polishing plot appearance
 
 ## Grammar of Graphics
 The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want.
 
 Building blocks of a graph include:
 
-- data
-- aesthetic mapping
-- geometric object
-- statistical transformations
-- faceting
+>- data
+>- aesthetic mapping
+>- geometric object
+>- statistical transformations
+>- faceting
 
 ## ggplot2 VS Base Graphics
 
 Compared to base graphics, ggplot2
 
-- is more verbose for simple / canned graphics
-- is less verbose for complex / custom graphics
-- does not have methods (data should always be in a data.frame)
-- uses a different system for adding plot elements
+>- is more verbose for simple / canned graphics
+>- is less verbose for complex / custom graphics
+>- does not have methods (data should always be in a data.frame)
+>- uses a different system for adding plot elements
 
 ## Aesthetic Mapping
 
@@ -70,18 +69,27 @@ Geometric objects are the actual marks we put on a plot. Examples include:
 
 A plot must have at least one geom; there is no upper limit. You can add a geom to a plot using the `+` operator
 
-## NCAA Basketball data
-We will use data from the NCAA basketball tournament from 2011 - 2016.
+## Exercise 1: NCAA Basketball data
+
+We will use data from the NCAA basketball tournament from 2011 - 2016 to create a polished figure.
+
 ```{r, message = F}
 hoops <- read_csv('http://www.math.montana.edu/ahoegh/teaching/stat408/datasets/TourneyDetailedResults.csv')
 hoops_2011 <- hoops %>% filter(Season >= 2011)
+```
+
+## NCAA Basketball Data Overview
+
+```{r}
 hoops_2011
 ```
 
 
+
+
 ## Graphical Primitives/ ggplot
 ```{r, fig.align='center', fig.height=2.75}
-graph.a <- ggplot(data = hoops_2011, aes(Lfgm,Wfgm))
+graph.a <- ggplot(data = hoops_2011, aes(Lfgm, Wfgm))
 graph.a
 ```
 
