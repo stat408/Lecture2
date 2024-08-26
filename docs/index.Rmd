@@ -81,7 +81,7 @@ hoops_2011 <- hoops %>% filter(Season >= 2011)
 ## NCAA Basketball Data Overview
 
 ```{r}
-hoops_2011
+glimpse(hoops_2011)
 ```
 
 
@@ -203,28 +203,33 @@ seattle_in <- read_csv('http://math.montana.edu/ahoegh/teaching/stat408/datasets
 Now use `ggplot2` to create an interesting graph using the Seattle Housing data set.
 
 ## Solution: ggplot2
-```{r,fig.align='center',echo=F}
-seattle_in$zipcode <- as.factor(seattle_in$zipcode)
-graph.a <- ggplot(data = seattle_in, aes(sqft_living,price))
-graph.a + geom_jitter(aes(col = zipcode))+ theme(plot.title = element_text(size=8), text = element_text(size=6)) + geom_smooth(method='loess')+ggtitle('Seattle Housing Sales: Price vs. Square Footage Living Space') + ylab('Sales Price (million dollars)') + xlab('Living Space (square foot)')+scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)), labels=as.character(0:7)) +  annotate('text',3500,6000000, label = 'Housing price depends on zipcode', size=2) +annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) + geom_segment(aes(x=3500, xend=3500, y=5500000, yend=3000000),
+```{r,fig.align='center',echo=F, warning = F}
+seattle_in$zipcode <- as.factor(seattle_in$zipcode) 
+ggplot(data = seattle_in, aes(sqft_living,price)) + 
+  geom_jitter(aes(col = zipcode)) + 
+  theme(plot.title = element_text(size=8), text = element_text(size=6)) + 
+  geom_smooth(method='loess', formula = 'y ~ x') + 
+  ggtitle('Seattle Housing Sales: Price vs. Square Footage Living Space') + 
+  ylab('Sales Price (million dollars)') + 
+  xlab('Living Space (square foot)') + 
+  scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)), labels=as.character(0:7)) +  annotate('text',3500,6000000, label = 'Housing price depends on zipcode', size=2) + 
+  annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) +
+  geom_segment(aes(x=3500, xend=3500, y=5500000, yend=3000000),
                            arrow = arrow(length = unit(0.5, "cm")))
 ```
 
-## Solution: ggplot2
+## A Solution: ggplot2
 ```{r, eval = F}
-seattle_in$zipcode <- as.factor(seattle_in$zipcode)
-graph.a <- ggplot(data = seattle_in, aes(sqft_living,price))
-graph.a + geom_jitter(aes(col = zipcode))+ 
-  theme(plot.title = element_text(size=8), 
-        text = element_text(size=6)) + geom_smooth(method='loess')+
+seattle_in$zipcode <- as.factor(seattle_in$zipcode) 
+ggplot(data = seattle_in, aes(sqft_living,price)) + 
+  geom_jitter(aes(col = zipcode)) + 
+  theme(plot.title = element_text(size=8), text = element_text(size=6)) + 
+  geom_smooth(method='loess', formula = 'y ~ x') + 
   ggtitle('Seattle Housing Sales: Price vs. Square Footage Living Space') + 
   ylab('Sales Price (million dollars)') + 
-  xlab('Living Space (square foot)')+
-  scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)),
-                     labels=as.character(0:7)) +  
-  annotate('text',3500,6000000, 
-           label = 'Housing price depends on zipcode', size=2) +
-  annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) + 
+  xlab('Living Space (square foot)') + 
+  scale_y_continuous(breaks=c(seq(0,7000000,by=1000000)), labels=as.character(0:7)) +  annotate('text',3500,6000000, label = 'Housing price depends on zipcode', size=2) + 
+  annotate("rect", xmin = 0, xmax = 7250, ymin = 5500000, ymax = 6500000, alpha = .6) +
   geom_segment(aes(x=3500, xend=3500, y=5500000, yend=3000000),
                            arrow = arrow(length = unit(0.5, "cm")))
 ```
